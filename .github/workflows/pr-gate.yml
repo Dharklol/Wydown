@@ -1,0 +1,28 @@
+name: Wydown PR Gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    name: quality-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository at immutable action revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Reject unsafe repository hygiene changes
+        run: python3 scripts/check_repo_hygiene.py .
+      - name: Verify hygiene checker behavior
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+# No OCaml source/dependency lock exists yet. This is a bootstrap gate,
+# NOT a claim that build, accounting, risk, replay, or live order tests passed.
+# Expand this required job only after corresponding implementation is committed.
