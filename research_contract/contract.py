@@ -72,6 +72,8 @@ class ResearchRun:
             check_id(x)
         if self.evaluation_split not in SPLITS:
             raise ContractError("unknown chronological evaluation block")
+        if self.evaluation_split == "reserved":
+            raise ContractError("reserved block locked until a separate, versioned release gate")
         if self.research_only is not True:
             raise ContractError("research metadata can never authorize trading")
         if self.input_coverage_status not in ("UNVERIFIED", "DATA-BLOCKED", "READY"):
