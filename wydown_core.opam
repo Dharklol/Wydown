@@ -1,0 +1,14 @@
+opam-version: "2.0"
+synopsis: "Wydown type-safe portfolio research and accounting core"
+description: "Research/paper-only financial primitives; no broker connectivity."
+maintainer: "Wydown contributors"
+authors: "Wydown contributors"
+license: "MIT"
+depends: [
+  "ocaml" {= "5.5.2"}
+  "dune" {= "3.24.2"}
+  "zarith" {= "1.14"}
+]
+build: [
+  ["dune" "build" "-p" name]
+]
