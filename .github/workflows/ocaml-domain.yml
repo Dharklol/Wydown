@@ -26,9 +26,9 @@ jobs:
       - name: Install exact direct build dependencies
         run: opam install . --deps-only --with-test --yes
       - name: Build domain library with warnings-as-errors
-        run: opam exec -- dune build @all --profile release
+        run: opam exec -- dune build @all --profile dev
       - name: Execute domain unit tests
-        run: opam exec -- dune runtest --profile release
+        run: opam exec -- dune runtest --profile dev
 
 # Full transitive opam/source/OS lock and reproducible artifact comparison
 # are still Stage-3 release gates. Exact compiler + direct deps are a
