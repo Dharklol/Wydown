@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Wydown canonical event envelope v1 — design draft",
+  "description": "Strict envelope and initial payload subset, NOT authorization for execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "environment",
+    "account_id",
+    "source_system",
+    "source_event_id",
+    "producer_version",
+    "correlation_id",
+    "event_time",
+    "observed_at",
+    "ingested_at",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "event_type": {
+      "enum": [
+        "order.accepted",
+        "order.canceled",
+        "execution.fill",
+        "execution.bust",
+        "market.mark",
+        "option.expired"
+      ]
+    },
+    "environment": {
+      "enum": [
+        "research",
+        "paper",
+        "live"
+      ]
+    },
+    "account_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "strategy_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "source_event_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "source_sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "producer_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "causation_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "config_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "model_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "event_time": {
+      "$ref": "#/$defs/utc"
+    },
+    "observed_at": {
+      "$ref": "#/$defs/utc"
+    },
+    "ingested_at": {
+      "$ref": "#/$defs/utc"
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+    },
+    "positive_decimal": {
+      "type": "string",
+      "pattern": "^(?!0(?:\\.0{1,6})?$)(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$"
+    },
+    "unsigned_decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,6})?$",
+      "description": "Canonical unsigned exact decimal string, <=6 fractional digits; no exponent or negative zero"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "side": {
+      "enum": [
+        "buy",
+        "sell",
+        "sell_short",
+        "buy_to_cover"
+      ]
+    },
+    "orderAccepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "order_id",
+        "instrument_id",
+        "side",
+        "quantity",
+        "limit_price",
+        "currency"
+      ],
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "instrument_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "side": {
+          "$ref": "#/$defs/side"
+        },
+        "quantity": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "limit_price": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "replaces_order_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "orderCanceled": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "order_id",
+        "reason"
+      ],
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "executionFill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_id",
+        "order_id",
+        "instrument_id",
+        "side",
+        "quantity",
+        "price",
+        "fee",
+        "currency"
+      ],
+      "properties": {
+        "execution_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "order_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "instrument_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "side": {
+          "$ref": "#/$defs/side"
+        },
+        "quantity": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "price": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "fee": {
+          "$ref": "#/$defs/unsigned_decimal"
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    },
+    "executionBust": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_execution_id",
+        "reason"
+      ],
+      "properties": {
+        "original_execution_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "marketMark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instrument_id",
+        "price",
+        "mark_method",
+        "currency"
+      ],
+      "properties": {
+        "instrument_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "price": {
+          "$ref": "#/$defs/unsigned_decimal"
+        },
+        "mark_method": {
+          "enum": [
+            "synthetic_reference",
+            "broker_mid",
+            "last_trade",
+            "official_close"
+          ]
+        },
+        "currency": {
+          "const": "USD"
+        }
+      }
+    },
+    "optionExpired": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instrument_id",
+        "quantity",
+        "disposition"
+      ],
+      "properties": {
+        "instrument_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "quantity": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "disposition": {
+          "const": "worthless"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "order.accepted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/orderAccepted"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "order.canceled"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/orderCanceled"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "execution.fill"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/executionFill"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "execution.bust"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/executionBust"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "market.mark"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/marketMark"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "option.expired"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/optionExpired"
+          }
+        }
+      }
+    }
+  ]
+}
