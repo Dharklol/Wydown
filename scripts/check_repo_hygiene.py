@@ -15,7 +15,7 @@ TEXT_SUFFIXES = {
 }
 BLOCKED_SUFFIXES = {".sqlite", ".sqlite3", ".db", ".pem", ".p12", ".pfx", ".key"}
 PRIVATE_KEY_MARKER = re.compile(rb"-----BEGIN [A-Z ]*PRIVATE KEY-----")
-ACTION = re.compile(r"^\s*uses:\s*([^\s#]+)", re.MULTILINE)
+ACTION = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)", re.MULTILINE)
 PINNED_ACTION = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?@[a-fA-F0-9]{40}$")
 
 
