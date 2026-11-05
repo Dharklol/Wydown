@@ -73,6 +73,10 @@ class ContractTests(unittest.TestCase):
             with self.assertRaises(ContractError):
                 sig(target_weight=value)
 
+    def test_reserved_block_is_locked(self):
+        with self.assertRaisesRegex(ContractError, "reserved block locked"):
+            run(evaluation_split="reserved")
+
     def test_verified_coverage_required(self):
         with self.assertRaises(ContractError):
             validate_signal_against_run(sig(), run(input_coverage_status="UNVERIFIED"))
