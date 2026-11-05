@@ -34,7 +34,7 @@ class HygieneChecks(unittest.TestCase):
     def test_private_key_fails(self):
         errors = inspect_file(
             "notes.txt",
-            b"-----BEGIN RSA PRIVATE KEY-----\nMII...\n",
+            b"-----BEGIN " + b"RSA PRIVATE KEY-----\nMII...\n",
         )
         self.assertTrue(any("private key" in error for error in errors))
 
