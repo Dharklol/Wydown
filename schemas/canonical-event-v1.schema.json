@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Wydown canonical event envelope v1 — design draft",
-  "description": "Strict envelope and initial payload subset, NOT authorization for execution.",
+  "description": "Strict Stage-1 draft for source economic facts; receipt attempts and journal postings are separate. Not production authorization.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -30,6 +30,7 @@
     },
     "event_type": {
       "enum": [
+        "cash.flow",
         "order.accepted",
         "order.canceled",
         "execution.fill",
@@ -332,9 +333,56 @@
           "const": "worthless"
         }
       }
+    },
+    "cashFlow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "flow_id",
+        "flow_type",
+        "amount",
+        "currency",
+        "external"
+      ],
+      "properties": {
+        "flow_id": {
+          "$ref": "#/$defs/id"
+        },
+        "flow_type": {
+          "enum": [
+            "deposit",
+            "withdrawal"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/positive_decimal"
+        },
+        "currency": {
+          "const": "USD"
+        },
+        "external": {
+          "const": true
+        }
+      }
     }
   },
   "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "cash.flow"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/cashFlow"
+          }
+        }
+      }
+    },
     {
       "if": {
         "properties": {
