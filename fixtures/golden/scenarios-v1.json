@@ -1,6 +1,6 @@
 {
   "fixture_version": 1,
-  "description": "SYNTHETIC design-only golden reference; all symbols and broker messages invented; do not route orders.",
+  "description": "SYNTHETIC design-only golden reference; all symbols and broker messages invented; do not route orders. v1.1 adds authoritative funding, true redelivery, sell, fractional precision and UNAV; still design-only.",
   "base_currency": "USD",
   "registry": [
     {
@@ -30,14 +30,43 @@
         }
       ],
       "description": "Synthetic standard put, not a broker contract"
+    },
+    {
+      "instrument_id": "SYN:EQ:MICRO",
+      "kind": "equity",
+      "currency": "USD",
+      "price_tick": "0.000001",
+      "quantity_increment": "0.000001",
+      "description": "Synthetic micro-tick asset only; not a listed security"
     }
   ],
   "scenarios": [
     {
       "scenario_id": "equity_buy_fee",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-05T15:02:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:equity_buy_fee:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "equity_buy_fee:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:equity_buy_fee",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "equity_buy_fee:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:equity_buy_fee:fill",
@@ -98,14 +127,43 @@
         "working_orders": [],
         "marks": {
           "SYN:EQ:TEST": "125.00"
-        }
-      }
+        },
+        "unit_supply": "5000",
+        "unit_price": "0.9998",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "-1.00"
+      },
+      "valuation_time": "2026-01-05T15:02:00Z",
+      "knowledge_cutoff": "2026-01-05T15:02:00Z"
     },
     {
       "scenario_id": "partial_duplicate",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-05T15:05:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:partial_duplicate:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "partial_duplicate:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:partial_duplicate",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "partial_duplicate:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:partial_duplicate:fill1",
@@ -160,7 +218,7 @@
         },
         {
           "schema_version": 1,
-          "event_id": "synthetic:partial_duplicate:fill2",
+          "event_id": "synthetic:partial_duplicate:fill2-redelivery",
           "event_type": "execution.fill",
           "environment": "paper",
           "account_id": "SYN-PILOT",
@@ -168,11 +226,11 @@
           "source_system": "golden_fixture_v1",
           "source_event_id": "partial_duplicate:fill2",
           "source_sequence": 2,
-          "producer_version": "fixture-v1",
+          "producer_version": "fixture-v1-reconnected",
           "correlation_id": "synthetic:partial_duplicate",
           "event_time": "2026-01-05T15:01:00Z",
-          "observed_at": "2026-01-05T15:01:01Z",
-          "ingested_at": "2026-01-05T15:01:02Z",
+          "observed_at": "2026-01-05T15:02:00Z",
+          "ingested_at": "2026-01-05T15:02:01Z",
           "payload": {
             "execution_id": "F-D2",
             "order_id": "O-D1",
@@ -218,14 +276,43 @@
         "working_orders": [],
         "marks": {
           "SYN:EQ:TEST": "100.00"
-        }
-      }
+        },
+        "unit_supply": "5000",
+        "unit_price": "1.00",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "0.00"
+      },
+      "valuation_time": "2026-01-05T15:05:00Z",
+      "knowledge_cutoff": "2026-01-05T15:05:00Z"
     },
     {
       "scenario_id": "long_put_expired",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-16T22:00:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:long_put_expired:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "long_put_expired:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:long_put_expired",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "long_put_expired:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:long_put_expired:buy",
@@ -350,14 +437,43 @@
         "marks": {
           "SYN:OPT:TEST:2026-01-16:P:90": "0.00",
           "SYN:EQ:TEST": "100.00"
-        }
-      }
+        },
+        "unit_supply": "5000",
+        "unit_price": "0.9498",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "-250.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "-251.00"
+      },
+      "valuation_time": "2026-01-16T22:00:00Z",
+      "knowledge_cutoff": "2026-01-16T22:00:00Z"
     },
     {
       "scenario_id": "cancel_replace",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-05T15:04:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:cancel_replace:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "cancel_replace:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:cancel_replace",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "cancel_replace:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:cancel_replace:old",
@@ -437,14 +553,43 @@
         "working_orders": [
           "O-R2"
         ],
-        "marks": {}
-      }
+        "marks": {},
+        "unit_supply": "5000",
+        "unit_price": "1.00",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "0.00"
+      },
+      "valuation_time": "2026-01-05T15:04:00Z",
+      "knowledge_cutoff": "2026-01-05T15:04:00Z"
     },
     {
       "scenario_id": "broker_bust",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-05T15:05:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:broker_bust:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "broker_bust:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:broker_bust",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "broker_bust:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:broker_bust:fill",
@@ -499,14 +644,43 @@
         "fee_total": "0.00",
         "duplicate_events": 0,
         "working_orders": [],
-        "marks": {}
-      }
+        "marks": {},
+        "unit_supply": "5000",
+        "unit_price": "1.00",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "0.00"
+      },
+      "valuation_time": "2026-01-05T15:05:00Z",
+      "knowledge_cutoff": "2026-01-05T15:05:00Z"
     },
     {
       "scenario_id": "late_mark",
-      "starting_cash": "5000.00",
-      "as_of": "2026-01-05T15:05:00Z",
       "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:late_mark:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "late_mark:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:late_mark",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "late_mark:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
         {
           "schema_version": 1,
           "event_id": "synthetic:late_mark:fill",
@@ -576,6 +750,28 @@
             "mark_method": "synthetic_reference",
             "currency": "USD"
           }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:late_mark:futuremark",
+          "event_type": "market.mark",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "late_mark:futuremark",
+          "source_sequence": 4,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:late_mark",
+          "event_time": "2026-01-05T15:04:00Z",
+          "observed_at": "2026-01-05T15:04:01Z",
+          "ingested_at": "2026-01-05T15:04:02Z",
+          "payload": {
+            "instrument_id": "SYN:EQ:TEST",
+            "price": "200.00",
+            "mark_method": "synthetic_reference",
+            "currency": "USD"
+          }
         }
       ],
       "expected": {
@@ -589,7 +785,377 @@
         "working_orders": [],
         "marks": {
           "SYN:EQ:TEST": "105.00"
+        },
+        "unit_supply": "5000",
+        "unit_price": "1.002",
+        "external_net_flow": "5000.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "10.00",
+        "net_investment_pnl": "10.00"
+      },
+      "valuation_time": "2026-01-05T15:02:30Z",
+      "knowledge_cutoff": "2026-01-05T15:05:00Z"
+    },
+    {
+      "scenario_id": "equity_sell_fifo",
+      "valuation_time": "2026-01-05T15:03:00Z",
+      "knowledge_cutoff": "2026-01-05T15:03:00Z",
+      "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:equity_sell_fifo:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "equity_sell_fifo:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:equity_sell_fifo",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "equity_sell_fifo:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:equity_sell_fifo:buy",
+          "event_type": "execution.fill",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "equity_sell_fifo:buy",
+          "source_sequence": 1,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:equity_sell_fifo",
+          "event_time": "2026-01-05T15:00:00Z",
+          "observed_at": "2026-01-05T15:00:01Z",
+          "ingested_at": "2026-01-05T15:00:02Z",
+          "payload": {
+            "execution_id": "F-S1",
+            "order_id": "O-S1",
+            "instrument_id": "SYN:EQ:TEST",
+            "side": "buy",
+            "quantity": "2",
+            "price": "100.00",
+            "fee": "1.00",
+            "currency": "USD"
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:equity_sell_fifo:sell",
+          "event_type": "execution.fill",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "equity_sell_fifo:sell",
+          "source_sequence": 2,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:equity_sell_fifo",
+          "event_time": "2026-01-05T15:01:00Z",
+          "observed_at": "2026-01-05T15:01:01Z",
+          "ingested_at": "2026-01-05T15:01:02Z",
+          "payload": {
+            "execution_id": "F-S2",
+            "order_id": "O-S2",
+            "instrument_id": "SYN:EQ:TEST",
+            "side": "sell",
+            "quantity": "1",
+            "price": "120.00",
+            "fee": "1.00",
+            "currency": "USD"
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:equity_sell_fifo:mark",
+          "event_type": "market.mark",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "equity_sell_fifo:mark",
+          "source_sequence": 3,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:equity_sell_fifo",
+          "event_time": "2026-01-05T15:02:00Z",
+          "observed_at": "2026-01-05T15:02:01Z",
+          "ingested_at": "2026-01-05T15:02:02Z",
+          "payload": {
+            "instrument_id": "SYN:EQ:TEST",
+            "price": "110.00",
+            "mark_method": "synthetic_reference",
+            "currency": "USD"
+          }
         }
+      ],
+      "expected": {
+        "duplicate_events": 0,
+        "working_orders": [],
+        "external_net_flow": "5000.00",
+        "unit_supply": "5000",
+        "cash": "4918.00",
+        "positions": {
+          "SYN:EQ:TEST": "1"
+        },
+        "nav": "5028.00",
+        "fee_total": "2.00",
+        "marks": {
+          "SYN:EQ:TEST": "110.00"
+        },
+        "unit_price": "1.0056",
+        "realized_trading_pnl": "20.00",
+        "unrealized_trading_pnl": "10.00",
+        "net_investment_pnl": "28.00"
+      }
+    },
+    {
+      "scenario_id": "fractional_rounding",
+      "valuation_time": "2026-01-05T15:02:00Z",
+      "knowledge_cutoff": "2026-01-05T15:02:00Z",
+      "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:fractional_rounding:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "fractional_rounding:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:fractional_rounding",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "fractional_rounding:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:fractional_rounding:fill",
+          "event_type": "execution.fill",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "fractional_rounding:fill",
+          "source_sequence": 1,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:fractional_rounding",
+          "event_time": "2026-01-05T15:00:00Z",
+          "observed_at": "2026-01-05T15:00:01Z",
+          "ingested_at": "2026-01-05T15:00:02Z",
+          "payload": {
+            "execution_id": "F-M1",
+            "order_id": "O-M1",
+            "instrument_id": "SYN:EQ:MICRO",
+            "side": "buy",
+            "quantity": "0.000001",
+            "price": "123.456789",
+            "fee": "0.000000",
+            "currency": "USD"
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:fractional_rounding:mark",
+          "event_type": "market.mark",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "fractional_rounding:mark",
+          "source_sequence": 2,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:fractional_rounding",
+          "event_time": "2026-01-05T15:01:00Z",
+          "observed_at": "2026-01-05T15:01:01Z",
+          "ingested_at": "2026-01-05T15:01:02Z",
+          "payload": {
+            "instrument_id": "SYN:EQ:MICRO",
+            "price": "123.456789",
+            "mark_method": "synthetic_reference",
+            "currency": "USD"
+          }
+        }
+      ],
+      "expected": {
+        "duplicate_events": 0,
+        "working_orders": [],
+        "external_net_flow": "5000.00",
+        "unit_supply": "5000",
+        "cash": "4999.999877",
+        "positions": {
+          "SYN:EQ:MICRO": "0.000001"
+        },
+        "nav": "5000.00",
+        "fee_total": "0.00",
+        "marks": {
+          "SYN:EQ:MICRO": "123.456789"
+        },
+        "unit_price": "1.00",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "0.00",
+        "net_investment_pnl": "0.00"
+      }
+    },
+    {
+      "scenario_id": "external_midrun_unav",
+      "valuation_time": "2026-01-05T15:04:00Z",
+      "knowledge_cutoff": "2026-01-05T15:04:00Z",
+      "events": [
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:external_midrun_unav:opening",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "external_midrun_unav:opening",
+          "source_sequence": 0,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:external_midrun_unav",
+          "event_time": "2026-01-05T14:00:00Z",
+          "observed_at": "2026-01-05T14:00:01Z",
+          "ingested_at": "2026-01-05T14:00:02Z",
+          "payload": {
+            "flow_id": "external_midrun_unav:opening",
+            "flow_type": "deposit",
+            "amount": "5000.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:external_midrun_unav:buy",
+          "event_type": "execution.fill",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "external_midrun_unav:buy",
+          "source_sequence": 1,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:external_midrun_unav",
+          "event_time": "2026-01-05T15:00:00Z",
+          "observed_at": "2026-01-05T15:00:01Z",
+          "ingested_at": "2026-01-05T15:00:02Z",
+          "payload": {
+            "execution_id": "F-U1",
+            "order_id": "O-U1",
+            "instrument_id": "SYN:EQ:TEST",
+            "side": "buy",
+            "quantity": "4",
+            "price": "100.00",
+            "fee": "0.00",
+            "currency": "USD"
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:external_midrun_unav:markbefore",
+          "event_type": "market.mark",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "external_midrun_unav:markbefore",
+          "source_sequence": 2,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:external_midrun_unav",
+          "event_time": "2026-01-05T15:01:00Z",
+          "observed_at": "2026-01-05T15:01:01Z",
+          "ingested_at": "2026-01-05T15:01:02Z",
+          "payload": {
+            "instrument_id": "SYN:EQ:TEST",
+            "price": "125.00",
+            "mark_method": "synthetic_reference",
+            "currency": "USD"
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:external_midrun_unav:deposit",
+          "event_type": "cash.flow",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "external_midrun_unav:deposit",
+          "source_sequence": 3,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:external_midrun_unav",
+          "event_time": "2026-01-05T15:02:00Z",
+          "observed_at": "2026-01-05T15:02:01Z",
+          "ingested_at": "2026-01-05T15:02:02Z",
+          "payload": {
+            "flow_id": "U-CF-2",
+            "flow_type": "deposit",
+            "amount": "1020.00",
+            "currency": "USD",
+            "external": true
+          }
+        },
+        {
+          "schema_version": 1,
+          "event_id": "synthetic:external_midrun_unav:markafter",
+          "event_type": "market.mark",
+          "environment": "paper",
+          "account_id": "SYN-PILOT",
+          "strategy_id": "synthetic_fixture",
+          "source_system": "golden_fixture_v1",
+          "source_event_id": "external_midrun_unav:markafter",
+          "source_sequence": 4,
+          "producer_version": "fixture-v1",
+          "correlation_id": "synthetic:external_midrun_unav",
+          "event_time": "2026-01-05T15:03:00Z",
+          "observed_at": "2026-01-05T15:03:01Z",
+          "ingested_at": "2026-01-05T15:03:02Z",
+          "payload": {
+            "instrument_id": "SYN:EQ:TEST",
+            "price": "140.00",
+            "mark_method": "synthetic_reference",
+            "currency": "USD"
+          }
+        }
+      ],
+      "expected": {
+        "duplicate_events": 0,
+        "working_orders": [],
+        "external_net_flow": "6020.00",
+        "unit_supply": "6000",
+        "cash": "5620.00",
+        "positions": {
+          "SYN:EQ:TEST": "4"
+        },
+        "nav": "6180.00",
+        "fee_total": "0.00",
+        "marks": {
+          "SYN:EQ:TEST": "140.00"
+        },
+        "unit_price": "1.03",
+        "realized_trading_pnl": "0.00",
+        "unrealized_trading_pnl": "160.00",
+        "net_investment_pnl": "160.00"
       }
     }
   ]
