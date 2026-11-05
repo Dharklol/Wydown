@@ -1,0 +1,4 @@
+(library
+ (name wydown_core)
+ (libraries zarith)
+ (modules money quantity))
